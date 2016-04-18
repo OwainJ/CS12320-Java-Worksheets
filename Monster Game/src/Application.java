@@ -11,9 +11,6 @@ import java.io.PrintWriter;
  * 
  * @author owj3
  *
- *Not sure how far I've got in Worksheet 12
- *But the Search Monster/Treasure function doesn't seem to work properly
- *neither does give treasure
  */
 
 public class Application {
@@ -71,7 +68,15 @@ public class Application {
 				break;
 				
 			case "P": //Print Monster and Treasure Info
-				printMonsterInfo();
+				printMonsterInfo("A");
+				break;
+				
+			case "PM": //Print just the monsters
+				printMonsterInfo("M");
+				break;
+				
+			case "PT": //Print just the treasures
+				printMonsterInfo("T");
 				break;
 				
 			case "S": //Save to file
@@ -111,27 +116,30 @@ public class Application {
 						+ "\n t 	- treasures "
 						+ "\n Show 	- Show the currently selected Monster and Treasure"
 						+ "\n g 	- Give curretly selected treasure to a Monster "
-						+ "\n gt 	- Search for Treasure to give to the currently selected Monster "
-						+ "\n p 	- print "					
+						+ "\n gt 	- Search for Treasure to give to the currently selected Monster "			
 						+ "\n c 	- change monster's face and hair (Curretly Disabled) "
 						+ "\n fm 	- Find Monster "
 						+ "\n ft 	- Find Treasure "
+						+ "\n p 	- print "
+						+ "\n pm	- Print Monsters "
+						+ "\n pt 	- Print Treasures "
 						+ "\n s 	- Save to file "
 						+ "\n l 	- Load from file "
 						+ "\n q 	- Quit program " 
-						+ "\n===============");
+						+ "\n ===============");
+		showSelected(monster, treasure);
 	}
 	
 	private void showSelected(Monster monster, Treasure treasure){
 		if (monster != null){
-				System.out.println("\n Currently Selected Monster:" + monster.getType());
+				System.out.print(" Currently Selected Monster: " + monster.getType());
 			} else {
-				System.out.println("\n Currently Selected Monster: None");
+				System.out.print(" Currently Selected Monster: None");
 			}
-			if (treasure != null){
-				System.out.println("\n Currently Selected Treasure:" + treasure.getName());
+		if (treasure != null){
+				System.out.print(" 	Currently Selected Treasure: " + treasure.getName());
 			} else {
-				System.out.println("\n Currently Selected Treasure: None");
+				System.out.print(" 	Currently Selected Treasure: None");
 			}
 	}
 
@@ -243,8 +251,16 @@ public class Application {
 		System.out.println("Monster details have been saved to file");
 	}
 
-	private void printMonsterInfo() {
-		System.out.println(this.toString());
+	private void printMonsterInfo(String choice) {
+		if (choice == "A"){
+			System.out.println(this.toString());
+		} else if(choice == "M"){
+			System.out.println(monsters);
+		} else if(choice == "T"){
+			System.out.println(treasures);
+		} else {
+			System.out.println("Error - not a valid choice in Application.printMonsterInfo");
+		}
 	}
 
 	private Monster addMonster(Monster monster) {
