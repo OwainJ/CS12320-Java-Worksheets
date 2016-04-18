@@ -49,14 +49,7 @@ public class Application {
 				break;
 			
 			case "T": //Create Treasure
-				System.out.println("enter info about the new treasure");
-				treasure = new Treasure();
-				treasure.readKeyboard();
-				treasures.add(treasure);
-				break;
-				
-			case "SHOW": //Show currently selected Monster and Treasure
-				showSelected(monster, treasure);
+				treasure = addTreasure(treasure);
 				break;
 		
 			case "G": //Give current Treasure to a monster
@@ -114,7 +107,6 @@ public class Application {
 		System.out.println("\n ===Main Menu=== "
 						+ "\n m 	- monsters "
 						+ "\n t 	- treasures "
-						+ "\n Show 	- Show the currently selected Monster and Treasure"
 						+ "\n g 	- Give curretly selected treasure to a Monster "
 						+ "\n gt 	- Search for Treasure to give to the currently selected Monster "			
 						+ "\n c 	- change monster's face and hair (Curretly Disabled) "
@@ -128,6 +120,7 @@ public class Application {
 						+ "\n q 	- Quit program " 
 						+ "\n ===============");
 		showSelected(monster, treasure);
+		System.out.println("\n"); //print an empty line to keep a gap between the menu and the output
 	}
 	
 	private void showSelected(Monster monster, Treasure treasure){
@@ -259,7 +252,7 @@ public class Application {
 		} else if(choice == "T"){
 			System.out.println(treasures);
 		} else {
-			System.out.println("Error - not a valid choice in Application.printMonsterInfo");
+			System.err.println("Error - not a valid choice in Application.printMonsterInfo");
 		}
 	}
 
@@ -269,6 +262,14 @@ public class Application {
 		monster.readKeyboard();
 		monsters.add(monster);
 		return monster;
+	}
+	
+	private Treasure addTreasure(Treasure treasure) {
+		System.out.println("enter info about the new treasure");
+		treasure = new Treasure();
+		treasure.readKeyboard();
+		treasures.add(treasure);
+		return treasure;
 	}
 
 	public String toString() {
