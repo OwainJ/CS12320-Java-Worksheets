@@ -1,7 +1,15 @@
-1
+2
 Elf
 Purple
 Chubby
 100
 funny
 0
+Knight
+grey
+old
+500
+funny
+2
+sword
+ring

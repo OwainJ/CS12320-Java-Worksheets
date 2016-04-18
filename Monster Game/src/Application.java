@@ -22,6 +22,14 @@ public class Application {
 	private ArrayList<Treasure> treasures;
 	private ArrayList<Monster> monsters;
 	private Scanner in;
+	Treasure treasure = null;
+	Monster monster = null;
+
+	//////////////////MAIN RUNNING THING
+	public static void main(String args[]) throws IOException {
+		Application app = new Application();
+		app.runApp();
+	}
 
 	public Application() {
 		monsters = new ArrayList<Monster>();
@@ -30,38 +38,47 @@ public class Application {
 	}
 
 	public void runApp() throws IOException {
-		Treasure treasure = null;
-		Monster monster = null;
+		
 		String choice;
 		System.out.println("*** HELLO - WELCOME TO MONSTER LAND ***o");
 		do {
 			printMenu();
+					
 			choice = in.next().toUpperCase();
 			switch (choice) {
-			case "M":
+			
+			case "M": //Create Monster
 				monster = addMonster(monster);
 				break;
 			
-			case "T":
+			case "T": //Create Treasure
 				System.out.println("enter info about the new treasure");
 				treasure = new Treasure();
 				treasure.readKeyboard();
 				treasures.add(treasure);
 				break;
-		
-			case "G":
-				monster = giveTreasure(treasure);			
+				
+			case "SHOW": //Show currently selected Monster and Treasure
+				showSelected(monster, treasure);
 				break;
 		
-			case "P":
+			case "G": //Give current Treasure to a monster
+				monster = giveTreasure(treasure);			
+				break;
+
+			case "GT": //Find Treasure to give to current monster
+				monster = giveSearchTreasure(monster);
+				break;
+				
+			case "P": //Print Monster and Treasure Info
 				printMonsterInfo();
 				break;
 				
-			case "S":
+			case "S": //Save to file
 				saveToFile();
 				break;
 			
-			case "L":
+			case "L": //load from file
 				loadFromFile();
 				break;
 				
@@ -70,15 +87,15 @@ public class Application {
 				//m1.setHair();			
 				break;
 				
-			case "FM":
-				searchMonster();
+			case "FM": //Search for Monster and display info
+				monster = searchMonster();
 				break;
 				
-			case "FT":
-				searchTreasure();
+			case "FT": //Search for Treasure and display info
+				treasure = searchTreasure();
 				break;
 				
-			case "Q":
+			case "Q": //Exit program
 				exitProgram();
 				break;
 
@@ -88,9 +105,39 @@ public class Application {
 		} while (!choice.equals("Q"));
 	}
 
-	private Monster giveTreasure(Treasure treasure) {
+	public void printMenu() { //Print the menu options
+		System.out.println("\n ===Main Menu=== "
+						+ "\n m 	- monsters "
+						+ "\n t 	- treasures "
+						+ "\n Show 	- Show the currently selected Monster and Treasure"
+						+ "\n g 	- Give curretly selected treasure to a Monster "
+						+ "\n gt 	- Search for Treasure to give to the currently selected Monster "
+						+ "\n p 	- print "					
+						+ "\n c 	- change monster's face and hair (Curretly Disabled) "
+						+ "\n fm 	- Find Monster "
+						+ "\n ft 	- Find Treasure "
+						+ "\n s 	- Save to file "
+						+ "\n l 	- Load from file "
+						+ "\n q 	- Quit program " 
+						+ "\n===============");
+	}
+	
+	private void showSelected(Monster monster, Treasure treasure){
+		if (monster != null){
+				System.out.println("\n Currently Selected Monster:" + monster.getType());
+			} else {
+				System.out.println("\n Currently Selected Monster: None");
+			}
+			if (treasure != null){
+				System.out.println("\n Currently Selected Treasure:" + treasure.getName());
+			} else {
+				System.out.println("\n Currently Selected Treasure: None");
+			}
+	}
+
+	private Monster giveTreasure(Treasure treasure) {	
 		Monster monster= null;
-		if(treasure != null) {
+		if (treasure != null) {
 			System.out.println("Which monster (name)? ");
 			String toFind = in.next();
 			monster = findMonster(toFind);
@@ -105,6 +152,25 @@ public class Application {
 		}
 	return monster;
 }
+	
+	private Monster giveSearchTreasure(Monster monster){
+		Treasure treasure = null;
+		if (monster!= null){
+			System.out.println("What Treasure do you want to give (name?");
+			String toFind = in.next();
+			treasure = findTreasure(toFind);
+			if (treasure != null){
+				monster.addTreasure(treasure);
+				System.out.println("DONE!");
+				System.out.println("Gave " + toFind + " to " + monster.getType());
+			} else {
+				System.err.println("Couldn't find that treasure: " + toFind);
+			}
+		} else {
+			System.err.println("You haven't created any monsters");
+		}
+		return monster;
+	}
 
 	private void exitProgram() {
 		System.out.println("*** THANK YOU FOR USING MONSTER LAND ***");
@@ -189,15 +255,9 @@ public class Application {
 		return monster;
 	}
 
-	public void printMenu() {
-		System.out
-				.println("\n ===Main Menu=== \n m - monsters \n t - treasures \n g - give treasures to monsters \n p - print "
-						+ "\n s - save monster \n c - change monster's face and hair \n fm - Find Monster \n ft - Find Treasure \n l - load \n q - quit \n===============");
-	}
-
 	public String toString() {
-		return "All Treasures created: " + treasures
-				+ " All Monsters and their Treasures: " + monsters;
+		return " All Treasures created: " + treasures
+				+ "\n All Monsters and their Treasures: " + monsters;
 	}
 	
 	private Treasure findTreasure(String toFind){
@@ -217,37 +277,61 @@ public class Application {
 			if (m.getType().equals(toFind)){
 				foundMonster = m;
 				break;
-			//} else {
-			//	System.out.print("Monster not found");
-			//	return null;
+			} else {
+				System.out.print("Monster not found");
+				return null;
 			}
 		}
 		return foundMonster;
 	}
 	
-	private void searchMonster(){
+	private Monster searchMonster(){
 		String i;
+		String answer;
 		Monster result;
 		System.out.print("Enter monster name to search: ");
 		i = in.next();
 		result = findMonster(i);
-		System.out.print(result);
+		System.out.println(result);
+		System.out.println("Do you want to set " + result.getType() + " as you currently selected Monster? (y/n)");
+		answer = in.next().toUpperCase();
+		switch (answer) {
+		case "Y":
+			System.out.println(result.getType() + " has been set as your currently selected monster");
+			monster = result;
+			break;
+			
+		case "N":
+			break;
+			
+		default:
+			System.out.println("not a valid choice");
+		}
+		return monster;
 	}
 	
-	private void searchTreasure(){
+	private Treasure searchTreasure(){
 		String i;
+		String answer;
 		Treasure result;
 		System.out.print("Enter treasure name to search: ");
 		i = in.next();
 		result = findTreasure(i);
-		System.out.print(result);
-	}
-	
-	
-
-	// ////////////////
-	public static void main(String args[]) throws IOException {
-		Application app = new Application();
-		app.runApp();
+		System.out.println(result);
+		System.out.println("Do you want to set " + result.getName() + " as you currently selected Treasure? (y/n)");
+		answer = in.next().toUpperCase();
+		switch (answer) {
+		case "Y":
+			System.out.println(result.getName() + " has been set as your currently selected monster");
+			treasure = result;
+			break;
+			
+		case "N":
+			break;
+			
+		default:
+			System.out.println("not a valid choice");
+			}
+		return treasure;
 	}
 }
