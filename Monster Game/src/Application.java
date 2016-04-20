@@ -267,10 +267,29 @@ public class Application {
 	}
 	
 	private Treasure addTreasure(Treasure treasure) {
-		System.out.println("enter info about the new treasure");
-		treasure = new Treasure();
-		treasure.readKeyboard();
-		treasures.add(treasure);
+		boolean correct = false;
+		System.out.println("What kind of treasure? (Gun, Sword, Axe)");
+		String type = in.next().toUpperCase();
+		switch(type){
+		case "GUN":
+			treasure = new Gun();
+			correct = true;
+			break;
+		case "SWORD":
+			treasure = new Sword();
+			correct = true;
+			break;
+		case "AXE":
+			treasure = new Axe();
+			correct = true;
+			break;
+		default:
+				System.err.println("Not a valid treasure type, please try again");	
+		}
+		if (correct){
+			treasure.readKeyboard();
+			treasures.add(treasure);
+		}		
 		return treasure;
 	}
 
